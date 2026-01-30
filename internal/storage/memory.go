@@ -2,7 +2,7 @@ package storage
 
 import (
 	"sync"
-	"url-shortener-ozon-bank/internal/util"
+	"url-shortener-ozon-bank/internal/shortcode"
 )
 
 type InMemoryStorage struct {
@@ -27,7 +27,7 @@ func (m *InMemoryStorage) Save(originalURL string) (string, error) {
 	}
 
 	for {
-		shortCode, err := util.GenerateCode()
+		shortCode, err := shortcode.GenerateCode()
 		if err != nil {
 			return "", err
 		}
