@@ -5,9 +5,16 @@ import (
 	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
+	"url-shortener-ozon-bank/internal/config"
 )
 
 func main() {
+
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+	log.Printf("Starting server on port %s with store type %s", cfg.Port, cfg.StoreType)
 
 	r := chi.NewRouter()
 
@@ -18,10 +25,7 @@ func main() {
 		}
 	})
 
-	port := 8080
-	log.Printf("Starting server on port %d", port)
-
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), r); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", cfg.Port), r); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
 }
