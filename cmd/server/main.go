@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
+	"os"
 	"url-shortener-ozon-bank/internal/config"
 	hndlr "url-shortener-ozon-bank/internal/handler"
 	srvc "url-shortener-ozon-bank/internal/service"
@@ -24,8 +25,7 @@ func main() {
 	case "memory":
 		storage = memory.NewInMemoryStorage()
 	case "postgres":
-		// a stub for Postgres
-		storage, err = postgres.NewPostgresStorage("postgres://user:pass@localhost:5432/dbname")
+		storage, err = postgres.NewPostgresStorage(os.Getenv("POSTGRES_DSN"))
 		if err != nil {
 			log.Fatalf("Failed to initialize postgres storage: %v", err)
 		}
