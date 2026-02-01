@@ -6,15 +6,29 @@ import (
 	"log"
 	"net/http"
 	"url-shortener-ozon-bank/internal/config"
+	hndlr "url-shortener-ozon-bank/internal/handler"
+	srvc "url-shortener-ozon-bank/internal/service"
+	strg "url-shortener-ozon-bank/internal/storage"
 )
 
 func main() {
-
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-	log.Printf("Starting server on port %s with store type %s", cfg.Port, cfg.StoreType)
+
+	var storage strg.Storage
+	switch cfg.StoreType {
+	case "memory":
+		storage = strg.NewInMemoryStorage()
+	case "postgres":
+		// a stub for Postgres
+		log.Printf("Postgres storage is not implemented yet, using in-memory as fallback")
+		storage = strg.NewInMemoryStorage()
+	}
+
+	service := srvc.NewShortenerService(storage)
+	handler := hndlr.NewHandler(service)
 
 	r := chi.NewRouter()
 
@@ -25,6 +39,10 @@ func main() {
 		}
 	})
 
+	r.Post("/shorten", handler.Shorten)
+	r.Get("/{code}", handler.Redirect)
+
+	log.Printf("Starting server on port %s with store type %s", cfg.Port, cfg.StoreType)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", cfg.Port), r); err != nil {
 		log.Fatalf("Error starting server: %v", err)
 	}
