@@ -1,8 +1,9 @@
-package storage
+package memory
 
 import (
 	"sync"
 	"url-shortener-ozon-bank/internal/shortcode"
+	"url-shortener-ozon-bank/internal/storage"
 )
 
 type InMemoryStorage struct {
@@ -23,7 +24,7 @@ func (m *InMemoryStorage) Save(originalURL string) (string, error) {
 	defer m.mu.Unlock()
 
 	if shortCode, ok := m.urlToCode[originalURL]; ok {
-		return shortCode, ErrURLExists
+		return shortCode, storage.ErrURLExists
 	}
 
 	for {
@@ -48,7 +49,7 @@ func (m *InMemoryStorage) Get(shortCode string) (string, error) {
 
 	url, ok := m.codeToURL[shortCode]
 	if !ok {
-		return "", ErrURLNotFound
+		return "", storage.ErrURLNotFound
 	}
 	return url, nil
 }

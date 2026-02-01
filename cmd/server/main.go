@@ -9,6 +9,7 @@ import (
 	hndlr "url-shortener-ozon-bank/internal/handler"
 	srvc "url-shortener-ozon-bank/internal/service"
 	strg "url-shortener-ozon-bank/internal/storage"
+	"url-shortener-ozon-bank/internal/storage/memory"
 )
 
 func main() {
@@ -20,11 +21,11 @@ func main() {
 	var storage strg.Storage
 	switch cfg.StoreType {
 	case "memory":
-		storage = strg.NewInMemoryStorage()
+		storage = memory.NewInMemoryStorage()
 	case "postgres":
 		// a stub for Postgres
 		log.Printf("Postgres storage is not implemented yet, using in-memory as fallback")
-		storage = strg.NewInMemoryStorage()
+		storage = memory.NewInMemoryStorage()
 	}
 
 	service := srvc.NewShortenerService(storage)
