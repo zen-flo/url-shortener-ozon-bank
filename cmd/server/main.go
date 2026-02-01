@@ -10,6 +10,7 @@ import (
 	srvc "url-shortener-ozon-bank/internal/service"
 	strg "url-shortener-ozon-bank/internal/storage"
 	"url-shortener-ozon-bank/internal/storage/memory"
+	"url-shortener-ozon-bank/internal/storage/postgres"
 )
 
 func main() {
@@ -24,8 +25,10 @@ func main() {
 		storage = memory.NewInMemoryStorage()
 	case "postgres":
 		// a stub for Postgres
-		log.Printf("Postgres storage is not implemented yet, using in-memory as fallback")
-		storage = memory.NewInMemoryStorage()
+		storage, err = postgres.NewPostgresStorage("postgres://user:pass@localhost:5432/dbname")
+		if err != nil {
+			log.Fatalf("Failed to initialize postgres storage: %v", err)
+		}
 	}
 
 	service := srvc.NewShortenerService(storage)
