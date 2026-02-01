@@ -2,8 +2,10 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
+	"url-shortener-ozon-bank/internal/storage"
 )
 
 type shortenRequest struct {
@@ -30,7 +32,7 @@ func (h *Handler) Shorten(w http.ResponseWriter, r *http.Request) {
 	}
 
 	shortCode, err := h.shortener.Shorten(req.URL)
-	if err != nil {
+	if err != nil && !errors.Is(err, storage.ErrURLExists) {
 		log.Printf("failed to shorten url %q: %v", req.URL, err)
 		http.Error(w, "failed to shorten url", http.StatusInternalServerError)
 		return
