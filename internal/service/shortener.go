@@ -17,3 +17,7 @@ func NewShortenerService(storage storage.Storage) *ShortenerService {
 func (s *ShortenerService) Shorten(originalURL string) (string, error) {
 	return s.storage.Save(originalURL)
 }
+
+func (s *ShortenerService) Resolve(shortCode string) (string, error) {
+	return s.storage.Get(shortCode)
+}
