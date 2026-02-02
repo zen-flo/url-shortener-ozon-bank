@@ -43,7 +43,7 @@ func (p *PostgresStorage) Save(originalURL string) (string, error) {
 	err := p.db.QueryRow("SELECT short_code FROM urls WHERE original_url = $1", originalURL).Scan(&existingCode)
 	if err == nil {
 		return existingCode, storage.ErrURLExists
-	} else if err != sql.ErrNoRows {
+	} else if !errors.Is(err, sql.ErrNoRows) {
 		return "", fmt.Errorf("failed to query existing url: %w", err)
 	}
 
@@ -68,7 +68,7 @@ func (p *PostgresStorage) Save(originalURL string) (string, error) {
 func (p *PostgresStorage) Get(shortCode string) (string, error) {
 	var originalURL string
 	err := p.db.QueryRow("SELECT original_url FROM urls WHERE short_code = $1", shortCode).Scan(&originalURL)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return "", storage.ErrURLNotFound
 	} else if err != nil {
 		return "", fmt.Errorf("failed to query existing url: %w", err)
