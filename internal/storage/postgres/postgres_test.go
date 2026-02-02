@@ -14,7 +14,7 @@ var testStorage *PostgresStorage
 func TestMain(m *testing.M) {
 	dsn := os.Getenv("POSTGRES_TEST_DSN")
 	if dsn == "" {
-		dsn = "postgres://shortener_user:shortener_pass@localhost:5433/shortener_test?sslmode=disable"
+		dsn = "postgres://shortener_user:secret@localhost:5433/shortener_test?sslmode=disable"
 	}
 
 	var err error
